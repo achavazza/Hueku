@@ -85,3 +85,20 @@ export function getLuminance(r, g, b) {
 export function getContrastTextColor(r, g, b) {
   return getLuminance(r, g, b) > 0.4 ? '#1a1a1a' : '#f0f0f0'
 }
+
+export function hexToRgb(hex) {
+  const h = hex.replace('#', '')
+  if (h.length !== 6) return null
+  const r = parseInt(h.slice(0, 2), 16)
+  const g = parseInt(h.slice(2, 4), 16)
+  const b = parseInt(h.slice(4, 6), 16)
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return null
+  return [r, g, b]
+}
+
+export function colorDistance(rgb1, rgb2) {
+  const dr = rgb1[0] - rgb2[0]
+  const dg = rgb1[1] - rgb2[1]
+  const db = rgb1[2] - rgb2[2]
+  return dr * dr + dg * dg + db * db
+}
