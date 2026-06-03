@@ -12,25 +12,29 @@
     <div class="info">
       <h1 class="name">{{ color.name }}</h1>
       <dl class="values">
-        <div class="row">
+        <div class="row" @click="copyValue('HEX')">
           <dt>HEX</dt>
-          <dd>{{ color.hex }}</dd>
+          <dd :class="{ 'is-copied': copied === 'HEX' }">{{ color.hex }}</dd>
         </div>
-        <div class="row">
+        <div class="row" @click="copyValue('RGB')">
           <dt>RGB</dt>
-          <dd>{{ color.rgb.join(', ') }}</dd>
+          <dd :class="{ 'is-copied': copied === 'RGB' }">{{ color.rgb.join(', ') }}</dd>
         </div>
-        <div class="row">
+        <div class="row" @click="copyValue('HSL')">
           <dt>HSL</dt>
-          <dd>{{ color.hsl.h }}° {{ color.hsl.s }}% {{ color.hsl.l }}%</dd>
+          <dd :class="{ 'is-copied': copied === 'HSL' }">{{ color.hsl.h }}° {{ color.hsl.s }}% {{ color.hsl.l }}%</dd>
         </div>
-        <div class="row">
+        <div class="row" @click="copyValue('LAB')">
           <dt>LAB</dt>
-          <dd>{{ color.lab.l }} {{ color.lab.a }} {{ color.lab.b }}</dd>
+          <dd :class="{ 'is-copied': copied === 'LAB' }">{{ color.lab.l }} {{ color.lab.a }} {{ color.lab.b }}</dd>
         </div>
-        <div class="row">
+        <div class="row" @click="copyValue('CMYK')">
+          <dt>CMYK</dt>
+          <dd :class="{ 'is-copied': copied === 'CMYK' }">{{ cmyk.join(', ') }}</dd>
+        </div>
+        <div class="row" @click="copyValue('WADA')">
           <dt>WADA ID</dt>
-          <dd>{{ color.id }}</dd>
+          <dd :class="{ 'is-copied': copied === 'WADA' }">{{ color.id }}</dd>
         </div>
       </dl>
     </div>
@@ -38,9 +42,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getContrastTextColor } from '../utils/color'
+import { getContrastTextColor, rgbToCmyk } from '../utils/color'
 
 const props = defineProps({
   color: {
@@ -50,13 +54,33 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const copied = ref(null)
 
 const textColor = computed(() =>
   getContrastTextColor(props.color.rgb[0], props.color.rgb[1], props.color.rgb[2]),
 )
 
+const cmyk = computed(() =>
+  rgbToCmyk(props.color.rgb[0], props.color.rgb[1], props.color.rgb[2]),
+)
+
 function goBack() {
   router.push({ name: 'home' })
+}
+
+function copyValue(type) {
+  const c = props.color
+  const map = {
+    HEX: c.hex,
+    RGB: 'rgb(' + c.rgb.join(', ') + ')',
+    HSL: 'hsl(' + c.hsl.h + '\u00B0 ' + c.hsl.s + '% ' + c.hsl.l + '%)',
+    LAB: 'lab(' + c.lab.l + ' ' + c.lab.a + ' ' + c.lab.b + ')',
+    CMYK: 'cmyk(' + cmyk.value.join(', ') + ')',
+    WADA: String(c.id),
+  }
+  navigator.clipboard.writeText(map[type])
+  copied.value = type
+  setTimeout(() => { copied.value = null }, 1000)
 }
 </script>
 
@@ -109,6 +133,12 @@ function goBack() {
   display: flex;
   gap: 8px;
   opacity: 0.75;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.row:hover {
+  opacity: 1;
 }
 
 .row dt {
@@ -118,5 +148,10 @@ function goBack() {
 
 .row dd {
   font-weight: var(--font-weight-light);
+  transition: opacity var(--transition-fast);
+}
+
+.row dd.is-copied {
+  opacity: 0.5;
 }
 </style>

@@ -86,6 +86,20 @@ export function getContrastTextColor(r, g, b) {
   return getLuminance(r, g, b) > 0.4 ? '#1a1a1a' : '#f0f0f0'
 }
 
+export function rgbToCmyk(r, g, b) {
+  const rn = r / 255
+  const gn = g / 255
+  const bn = b / 255
+  const k = 1 - Math.max(rn, gn, bn)
+  if (k === 1) return [0, 0, 0, 100]
+  return [
+    Math.round(((1 - rn - k) / (1 - k)) * 100),
+    Math.round(((1 - gn - k) / (1 - k)) * 100),
+    Math.round(((1 - bn - k) / (1 - k)) * 100),
+    Math.round(k * 100),
+  ]
+}
+
 export function hexToRgb(hex) {
   const h = hex.replace('#', '')
   if (h.length !== 6) return null
