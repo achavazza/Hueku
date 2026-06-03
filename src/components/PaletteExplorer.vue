@@ -61,7 +61,7 @@ function selectPalette(id) {
   flex-shrink: 0;
   min-height: var(--row-min-height);
   width: 100%;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid var(--border-color, #000);
 }
 
 .row-wrapper.is-last {
