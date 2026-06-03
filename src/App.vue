@@ -12,12 +12,12 @@ const colorsStore = useColorsStore()
 
 function setFavicon(color) {
   const canvas = document.createElement('canvas')
-  canvas.width = 16
-  canvas.height = 16
+  canvas.width = 32
+  canvas.height = 32
   const ctx = canvas.getContext('2d')
   ctx.fillStyle = color
   ctx.beginPath()
-  ctx.arc(8, 8, 6, 0, Math.PI * 2)
+  ctx.arc(16, 16, 12, 0, Math.PI * 2)
   ctx.fill()
   let link = document.querySelector('link[rel="icon"]')
   if (!link) {
