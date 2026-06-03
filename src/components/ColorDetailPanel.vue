@@ -76,7 +76,7 @@ function copyValue(type) {
     HSL: 'hsl(' + c.hsl.h + '\u00B0 ' + c.hsl.s + '% ' + c.hsl.l + '%)',
     LAB: 'lab(' + c.lab.l + ' ' + c.lab.a + ' ' + c.lab.b + ')',
     CMYK: 'cmyk(' + cmyk.value.join(', ') + ')',
-    WADA: String(c.id),
+    WADA: window.location.origin + '/color/' + c.id,
   }
   navigator.clipboard.writeText(map[type])
   copied.value = type
