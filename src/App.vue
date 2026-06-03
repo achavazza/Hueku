@@ -4,8 +4,10 @@
 
 <script setup>
 import { watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useColorsStore } from './stores/colorsStore'
 
+const route = useRoute()
 const colorsStore = useColorsStore()
 
 function setFavicon(color) {
@@ -17,10 +19,14 @@ function setFavicon(color) {
   ctx.beginPath()
   ctx.arc(8, 8, 6, 0, Math.PI * 2)
   ctx.fill()
-  const link = document.querySelector('link[rel="icon"]')
-  if (link) {
-    link.href = canvas.toDataURL()
+  let link = document.querySelector('link[rel="icon"]')
+  if (!link) {
+    link = document.createElement('link')
+    link.rel = 'icon'
+    link.type = 'image/png'
+    document.head.appendChild(link)
   }
+  link.href = canvas.toDataURL()
 }
 
 onMounted(() => {
@@ -36,6 +42,15 @@ watch(
     }
     const color = colorsStore.colorById(id)
     if (color) setFavicon(color.hex)
+  },
+)
+
+watch(
+  () => route.name,
+  (name) => {
+    if (name === 'home') {
+      setFavicon('#000000')
+    }
   },
 )
 </script>
