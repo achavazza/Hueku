@@ -1,31 +1,28 @@
 <template>
-  <div
-    class="row"
-    :class="{ 'is-selected': selected }"
-    @mouseenter="hovered = true"
-    @mouseleave="hovered = false"
-    @focusin="hovered = true"
-    @focusout="hovered = false"
-  >
+  <div class="row" :class="{ 'is-selected': selected }">
     <div
       v-for="col in palette.colors"
       :key="col.id"
       class="swatch"
       :style="{ backgroundColor: col.hex }"
+      @mouseenter="hoveredId = col.id"
+      @mouseleave="hoveredId = null"
     >
       <span class="swatch-label" :style="{ color: getLabelColor(col) }">
         {{ col.name }}
       </span>
-      <div v-if="hovered" class="actions" :style="{ color: getLabelColor(col) }">
+      <div
+        class="actions"
+        :style="{ color: getLabelColor(col) }"
+        :class="{ 'is-visible': hoveredId === col.id }"
+      >
         <button
           class="action"
           @click.stop="explore(col)"
-          @focusin.stop
         >explore</button>
         <button
           class="action"
           @click.stop="copyHex(col)"
-          @focusin.stop
         >copy HEX</button>
       </div>
     </div>
@@ -49,7 +46,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const hovered = ref(false)
+const hoveredId = ref(null)
 
 function getLabelColor(col) {
   return getContrastTextColor(col.rgb[0], col.rgb[1], col.rgb[2])
@@ -99,8 +96,8 @@ function copyHex(col) {
   transition: opacity var(--transition-fast);
 }
 
-.row:hover .swatch-label,
-.row:focus-within .swatch-label {
+.swatch:hover .swatch-label,
+.swatch:focus-within .swatch-label {
   opacity: 0.6;
 }
 
@@ -114,6 +111,12 @@ function copyHex(col) {
   align-items: center;
   gap: 2px;
   pointer-events: auto;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.actions.is-visible {
+  opacity: 1;
 }
 
 .action {
