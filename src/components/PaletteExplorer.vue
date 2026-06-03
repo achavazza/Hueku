@@ -5,7 +5,7 @@
       :key="palette.id"
       class="row-wrapper"
       :class="{ 'is-last': i === palettes.length - 1 }"
-      :style="rowHeightStyle"
+      :style="[rowHeightStyle, i < palettes.length - 1 ? { borderBottom: '1px solid ' + borderColor } : {}]"
     >
       <PaletteRow
         :palette="palette"
@@ -25,6 +25,10 @@ const props = defineProps({
   colorId: {
     type: Number,
     required: true,
+  },
+  borderColor: {
+    type: String,
+    default: '#000',
   },
 })
 
@@ -61,7 +65,6 @@ function selectPalette(id) {
   flex-shrink: 0;
   min-height: var(--row-min-height);
   width: 100%;
-  border-bottom: 1px solid var(--border-color, #000);
 }
 
 .row-wrapper.is-last {

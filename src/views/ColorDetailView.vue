@@ -1,7 +1,7 @@
 <template>
-  <div v-if="color" class="detail" :style="{ '--border-color': borderColor }">
-    <ColorDetailPanel :color="color" />
-    <PaletteExplorer :color-id="color.id" />
+  <div v-if="color" class="detail">
+    <ColorDetailPanel :color="color"  :style="{ 'border-color': borderColor }" />
+    <PaletteExplorer :color-id="color.id" :border-color="borderColor" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import { onMounted, computed, watch } from 'vue'
 import { useColorsStore } from '../stores/colorsStore'
 import { usePalettesStore } from '../stores/palettesStore'
-import { getLuminance } from '../utils/color'
+import { getLuminance, hexToRgb } from '../utils/color'
 import ColorDetailPanel from '../components/ColorDetailPanel.vue'
 import PaletteExplorer from '../components/PaletteExplorer.vue'
 
@@ -27,7 +27,9 @@ const color = computed(() => colorsStore.colorById(props.id))
 const borderColor = computed(() => {
   const c = color.value
   if (!c) return '#000'
-  return getLuminance(c.hex) < 0.15 ? '#fff' : '#000'
+  const rgb = hexToRgb(c.hex)
+  if (!rgb) return '#000'
+  return getLuminance(rgb[0], rgb[1], rgb[2]) < 0.15 ? '#fff' : '#000'
 })
 
 onMounted(() => {
