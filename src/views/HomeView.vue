@@ -6,7 +6,7 @@
         class="search"
         type="text"
         v-model="query"
-        placeholder="Search"
+        placeholder="Hex or keyword [Press Enter]"
         @keydown.enter="search"
       />
       <div class="about-toggle" @click="aboutOpen = !aboutOpen">
